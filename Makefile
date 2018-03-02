@@ -6,18 +6,19 @@ LDFLAGS =
 PORT= 8001
 
 s: 
-	gcc $(CFLAGS) $(OPTFLAGS) -o server_udp server_udp.c $(LDFLAGS)
+	gcc $(CFLAGS) $(OPTFLAGS) -o server my_server.c $(LDFLAGS)
 	./server_udp
 
 c: 
-	gcc $(CFLAGS) $(OPTFLAGS) -o client_udp client_udp.c $(LDFLAGS)
+	gcc $(CFLAGS) $(OPTFLAGS) -o client my_client.c $(LDFLAGS)
 	./client_udp
 
 all:
-	gcc $(CFLAGS) $(OPTFLAGS) -o cli cli.c $(LDFLAGS)
-	gcc $(CFLAGS) $(OPTFLAGS) -o serv serv.c $(LDFLAGS)
+	gcc $(CFLAGS) $(OPTFLAGS) -o server my_server.c $(LDFLAGS)
+	gcc $(CFLAGS) $(OPTFLAGS) -o client my_client.c $(LDFLAGS)
+
 
 clean:
-	rm -f server_udp client_udp cli serv *.o core core.* *.core
+	rm -f server client transmit.txt*.o core core.* *.core
 
 
