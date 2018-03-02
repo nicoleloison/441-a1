@@ -13,7 +13,7 @@ int main(void)
 {
     int sockfd = 0;
     int bytesReceived = 0;
-    char recvBuff[8888];
+    char recvBuff[1111];
     memset(recvBuff, '0', sizeof(recvBuff));
     struct sockaddr_in serv_addr;
     
@@ -48,15 +48,14 @@ int main(void)
     }
     int octoleg_num =0;
     
-    /* Receive data in chunks of 8888 bytes */
-    while((bytesReceived = read(sockfd, recvBuff, 8888)) > 0)
+    /* Receive data in chunks of 1111 bytes max */
+    while((bytesReceived = read(sockfd, recvBuff, 1111)) > 0)
     {
         octoleg_num++;
         printf("Bytes received %d\n",bytesReceived);
         printf("Octoleg number :  %d\n",octoleg_num);
         fwrite(recvBuff, 1,bytesReceived,fp);
     }
-    
     if(bytesReceived < 0)
     {
         printf("\n Read Error \n");
