@@ -86,11 +86,11 @@ int waitToRead(int socket)
     int recv_result;
     int count =0 ;
     setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO,&timeout,sizeof(timeout));
- 
+    
     while(1)
     {
         recv_result = recvfrom(socket, &buf, sizeof(buf), 0,(struct sockaddr*)&serv_addr, &serv_addr);
-    
+        
         if(recv_result > 0 && count<number_of_legs){
             printf(buf);
             return 1;
@@ -111,17 +111,17 @@ void populate_array(char * val, char arr [] ) {
     }
 }
 /*********************************/
-    void parse_string(char input[]){
-        const char delimiters[] = "\v";
-        char *token, *cp;
-        token = strtok (input, delimiters);     /* token => "info" */
-        strcat(info, token);
-        token = strtok (NULL, delimiters); /* token => "size" */
-        size_f=atoi(token);
-        token = strtok (NULL, delimiters);    /* token => "txt" */
-        strcat(txt_to_write, token);
-        
-    }
+void parse_string(char input[]){
+    const char delimiters[] = "\v";
+    char *token, *cp;
+    token = strtok (input, delimiters);     /* token => "info" */
+    strcat(info, token);
+    token = strtok (NULL, delimiters); /* token => "size" */
+    size_f=atoi(token);
+    token = strtok (NULL, delimiters);    /* token => "txt" */
+    strcat(txt_to_write, token);
+    
+}
 
 /********************************************/
 void update_expected(){
@@ -158,7 +158,7 @@ void read_info(char array []){
     populate_array(a, info);
     char * c = strtok(NULL, "");
     strcat(txt_to_write, c);
-   
+    
 }
 /********************************************/
 bool receiveMessage()
@@ -185,7 +185,7 @@ bool receiveMessage()
     
     // Loop and listen for incoming message
     int counter = 0;
-   
+    
     while (1){
         /*wait at select to, read*/
         sockResult = waitToRead(sockfd);
@@ -224,11 +224,12 @@ bool receiveMessage()
                 info[0]='\0';
                 char* ptr;
                 ptr = &recvBuff;
-                read_info(ptr);
-              
+                parse_string(ptr);
+                //read_info(ptr);
+                
                 txt_to_write[bytesReceived -7] = '\0';/**clean up of info **/
                 /** dealing with the legs and blocks **/
-                decode_info();
+               
                 if(octoleg_rcv<8){
                     octoleg_ex++;
                 }
@@ -248,7 +249,7 @@ bool receiveMessage()
                 
                 printf("expected leg is: %d and received was : %d \n", octoleg_ex, octoleg_rcv);
                 check_expected();
-        
+                
                 
                 /*write into transmit file*/
                 counter ++;
@@ -294,8 +295,8 @@ int main(void)
         return false;
     }
     pthread_join(receiveThread, NULL);
-
-
+    
+    
     return 0;
 }
 

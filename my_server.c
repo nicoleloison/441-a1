@@ -66,6 +66,22 @@ int expected (int val) {
         return 1;
     }
 }
+/********************************************/
+/*info is such
+ 0  1  2  3  4  5  6  7
+ B  Lt L  Lx Be Fe \v \0 */
+
+void update_info(){
+    
+    info[0]=value_to_letter(octoblock_count);
+    info[1]=value_to_letter(number_of_legs);
+    info[2]=value_to_letter(octoleg_count);
+    info[3]=value_to_letter(octoleg_ex);
+    info[4]=value_to_letter(end_of_block);
+    info[5]=value_to_letter(end_of_file);
+    info[6]='\v';
+  
+}
 
 /********************************************/
 /*info is such
@@ -73,7 +89,7 @@ int expected (int val) {
  B  Lt L  Lx Be Fe \v \0 */
 
 void update_information(){
-    
+
     FILE *in = fmemopen(information, sizeof(information), "w");
     fprintf(in,"%d", number_of_blocks);
     fprintf(in,"%d", octoblock_count);
@@ -157,7 +173,7 @@ int main(void)
             printf("Total number of octolegs to send = %d\n",number_of_legs);
             printf("Total number of octoblock to send = %d\n",number_of_blocks);
             printf("Last leg size = %d\n",last_leg_size);
-            
+
         }
         /*from txt to legs */
         char* temp_ptr;
@@ -165,7 +181,7 @@ int main(void)
         
         char array_of_legs[number_of_legs][sizeof(txt_to_send)] ;
         char array_blocks[number_of_blocks][sizeof(txt_to_send)] ;
-        
+      
         for(int leg = 0; leg < number_of_legs; ++leg)
         {
             for(int letter = 0; letter < sizeof(txt_to_send); ++letter)
@@ -174,7 +190,7 @@ int main(void)
             }
         }
         
-        
+      
         /*8 legs in blocks*/
         int counter =0;
         
@@ -194,9 +210,10 @@ int main(void)
             }
             
             counter ++;
+            update_info();
             update_information();
-            
-            
+
+    
             /*appending the info, block number and file size*/
             char to_send[1111] = { 0 };
             FILE *io = fmemopen(to_send, sizeof(to_send), "w");
@@ -211,17 +228,18 @@ int main(void)
             if (counter == number_of_legs){
                 end_of_block=6;
                 end_of_file=6;
+                update_info();
                 update_information();
                 write(connfd, to_send, sizeof(to_send));
                 printf("sending leg : %d of block %d \n", octoleg_count, octoblock_count);
                 printf("File sent \n");
                 return 0;
             }
-            
+           
             
             printf("sending leg : %d of block %d \n", octoleg_count, octoblock_count);
             write(connfd, to_send, sizeof(to_send));
-            
+           
         }while(counter!= number_of_legs);
         
         close(connfd);
