@@ -110,13 +110,19 @@ void populate_array(char * val, char arr [] ) {
         arr[i] = val[i];
     }
 }
-/********************************************/
-void decode_info(){
-    octoblock_rcv = letter_to_value(info[0]);
-    octoleg_rcv = letter_to_value(info[2]);
-    end_of_block = letter_to_value(info[5]);
-    end_of_file = letter_to_value(info[6]);
-}
+/*********************************/
+    void parse_string(char input[]){
+        const char delimiters[] = "\v";
+        char *token, *cp;
+        token = strtok (input, delimiters);     /* token => "info" */
+        strcat(info, token);
+        token = strtok (NULL, delimiters); /* token => "size" */
+        size_f=atoi(token);
+        token = strtok (NULL, delimiters);    /* token => "txt" */
+        strcat(txt_to_write, token);
+        
+    }
+
 /********************************************/
 void update_expected(){
     if (octoleg_rcv <8 && end_of_block != 6){
